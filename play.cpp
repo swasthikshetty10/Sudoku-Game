@@ -3,6 +3,8 @@
 #include "SudokuGenerator.cpp"
 using namespace std;
 #define N 9
+
+// Sudoku Game
 class Sudoku : virtual SudokuSolver
 {
 
@@ -11,48 +13,48 @@ private:
     string player_name;
     SudokuGenerator *puzzle;
     bool gameOver = 0;
+    string clearscreen = "\033[2J\033[1;1H"; // Clear Screen
 
 public:
+    // Constructor
     Sudoku()
     {
-        srand(time(NULL));
+        srand(time(NULL)); // Using current time as seed for random generator
     }
+    // Distructor
     ~Sudoku()
     {
         delete puzzle;
     }
+    // START: Main game starts here
     void start()
     {
-        int choice, row, col, num;
-        char temp;
+        int row, col, num;
+        char temp, choice;
         while (1)
         {
-            cout << "\033[2J\033[1;1H";
-            cout << "--------Welcome To Sudoku Game--------"
-                 << "\n\n";
-            cout << "1 -> START"
-                 << "\n";
-            cout << "2 -> HIGH SCORE"
-                 << "\n";
-            cout << "3 -> EXIT"
-                 << "\n\n";
-            cout << "ENTER YOUR CHOICE : "
-                 << "\n";
+            cout << clearscreen; // Clear screen
+            cout << "--------Welcome To Sudoku Game--------\n\n";
+            cout << "1 -> START\n";
+            cout << "2 -> HIGH SCORE\n";
+            cout << "3 -> EXIT\n\n";
+            cout << "ENTER YOUR CHOICE : \n";
             cin >> choice;
-            if (choice == 1)
+            if (choice - '0' == 1) // check for choices
             {
-                delete puzzle;
-                newGame();
+                newGame(); // initializing new game(generating new puzzle)
+                cout << "Enter your name : \n";
+                cin >> player_name;
                 while (gameOver != 1)
                 {
-                    cout << "\033[2J\033[1;1H";
-                    cout << "Solve this :                                                         | Enter 0 & 0 to exit   \n";
+                    cout << clearscreen;
+                    cout << "Hi " << player_name << " Solve this :                                                         | Enter 0 & 0 to exit   \n";
                     printGrid(grid);
                     cout << "Enter Row & Column:\n ";
                     cin >> row >> col;
                     if (row == 0 & col == 0)
                     {
-                        cout << "\033[2J\033[1;1H";
+                        cout << clearscreen;
                         cout << "Solution : " << endl;
                         printGrid(puzzle->grid);
                         cout << "press any key to exit \n";
@@ -71,75 +73,78 @@ public:
                     }
                 }
             }
-            if (choice == 2)
+            if (choice - '0' == 2)
             {
-                cout << "High Score";
+                displayHighScore();
             }
-            if (choice == 3)
+            if (choice - '0' == 3)
             {
                 exit(0);
             }
         }
     }
+    // function to initialize new puzzle(new object of class SudokuGenerator)
     void newGame()
     {
         puzzle = new SudokuGenerator();
         puzzle->createSeed();
         puzzle->genPuzzle();
-        puzzle->calculateDifficulty();
+        // making two copy of question grid
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++)
             {
                 Qgrid[i][j] = (puzzle->grid)[i][j];
                 grid[i][j] = (puzzle->grid)[i][j];
             }
+        // solve question
         SolveSudoku(puzzle->grid);
         gameOver = 0;
     }
+    // function to print grid to console
     void printGrid(int grid[N][N])
     {
-
         for (int i = 0; i < 9; i++)
         {
             for (int j = 0; j < 9; j++)
             {
                 if ((i == 0 | i == 3 | i == 6) && j == 0)
-                    cout << " -------------------------"
-                         << "\n";
+                    cout << " -------------------------\n";
                 if (j == 0 | j == 3 | j == 6)
                     cout << " | ";
                 else
                     cout << " ";
                 if (grid[i][j])
-                {
                     if (grid[i][j] == (puzzle->grid)[i][j])
-                    {
                         cout << grid[i][j];
-                    }
                     else
-                    {
                         cout << grid[i][j];
-                    }
-                }
                 else
                     cout << '-';
             }
             cout << " | \n";
         }
-        cout << " -------------------------"
-             << "\n";
+        cout << " -------------------------\n";
     }
+    // function  check if entered location valid
     bool isValid(int row, int col)
     {
         if (Qgrid[row][col] == 0)
             return 1;
         else
             return 1;
-    };
+    }
+    void displayHighScore()
+    {
+        cout << "High Score:-\n";
+    }
 };
+
+// Main Function
 int main()
 {
+    // Initializing Game object
     Sudoku Game;
+    // start Game
     Game.start();
     return 0;
 }

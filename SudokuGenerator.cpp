@@ -1,12 +1,8 @@
 #include <iostream>
 #include <algorithm>
 #include <ctime>
-#include <cstdlib>
-#include <fstream>
-#include <sstream>
 #include <string>
 #include <vector>
-
 #define UNASSIGNED 0
 
 using namespace std;
@@ -17,84 +13,46 @@ private:
     int solnGrid[9][9];
     int guessNum[9];
     int gridPos[81];
-    int difficultyLevel;
     bool grid_status;
 
 public:
     int grid[9][9];
     SudokuGenerator();
-    SudokuGenerator(string, bool row_major = true);
     void createSeed();
     void printGrid();
     bool solveGrid();
-    string getGrid();
     void countSoln(int &number);
     void genPuzzle();
     bool verifyGridStatus();
-    void printSVG(string);
-    void calculateDifficulty();
-    int branchDifficultyScore();
 };
 
-// START: Get grid as string in row major order
-string SudokuGenerator::getGrid()
-{
-    string s = "";
-    for (int row_num = 0; row_num < 9; ++row_num)
-    {
-        for (int col_num = 0; col_num < 9; ++col_num)
-        {
-            s = s + to_string(grid[row_num][col_num]);
-        }
-    }
-
-    return s;
-}
-// END: Get grid as string in row major order
-
-// START: Generate random number
+// Function to Generate random number
 int genRandNum(int maxLimit)
 {
     return rand() % maxLimit;
 }
-// END: Generate random number
 
-// START: Create seed grid
+// Function to Create seed grid
 void SudokuGenerator::createSeed()
 {
     this->solveGrid();
-
     // Saving the solution grid
     for (int i = 0; i < 9; i++)
-    {
         for (int j = 0; j < 9; j++)
-        {
             this->solnGrid[i][j] = this->grid[i][j];
-        }
-    }
 }
-// END: Create seed grid
 
-// START: Intialising
+// Function to Intialising
 SudokuGenerator::SudokuGenerator()
 {
-
-    // initialize difficulty level
-    this->difficultyLevel = 0;
-
     // Randomly shuffling the array of removing grid positions
     for (int i = 0; i < 81; i++)
-    {
         this->gridPos[i] = i;
-    }
 
     random_shuffle(this->gridPos, (this->gridPos) + 81, genRandNum);
-
     // Randomly shuffling the guessing number array
     for (int i = 0; i < 9; i++)
-    {
         this->guessNum[i] = i + 1;
-    }
 
     random_shuffle(this->guessNum, (this->guessNum) + 9, genRandNum);
 
@@ -106,125 +64,16 @@ SudokuGenerator::SudokuGenerator()
             this->grid[i][j] = 0;
         }
     }
-
     grid_status = true;
 }
-// END: Initialising
 
-// START: Custom Initialising with grid passed as argument
-SudokuGenerator::SudokuGenerator(string grid_str, bool row_major)
-{
-    if (grid_str.length() != 81)
-    {
-        grid_status = false;
-        return;
-    }
-
-    // First pass: Check if all cells are valid
-    for (int i = 0; i < 81; ++i)
-    {
-        int curr_num = grid_str[i] - '0';
-        if (!((curr_num == UNASSIGNED) || (curr_num > 0 && curr_num < 10)))
-        {
-            grid_status = false;
-            return;
-        }
-
-        if (row_major)
-            grid[i / 9][i % 9] = curr_num;
-        else
-            grid[i % 9][i / 9] = curr_num;
-    }
-
-    // Second pass: Check if all columns are valid
-    for (int col_num = 0; col_num < 9; ++col_num)
-    {
-        bool nums[10] = {false};
-        for (int row_num = 0; row_num < 9; ++row_num)
-        {
-            int curr_num = grid[row_num][col_num];
-            if (curr_num != UNASSIGNED && nums[curr_num] == true)
-            {
-                grid_status = false;
-                return;
-            }
-            nums[curr_num] = true;
-        }
-    }
-
-    // Third pass: Check if all rows are valid
-    for (int row_num = 0; row_num < 9; ++row_num)
-    {
-        bool nums[10] = {false};
-        for (int col_num = 0; col_num < 9; ++col_num)
-        {
-            int curr_num = grid[row_num][col_num];
-            if (curr_num != UNASSIGNED && nums[curr_num] == true)
-            {
-                grid_status = false;
-                return;
-            }
-            nums[curr_num] = true;
-        }
-    }
-
-    // Fourth pass: Check if all blocks are valid
-    for (int block_num = 0; block_num < 9; ++block_num)
-    {
-        bool nums[10] = {false};
-        for (int cell_num = 0; cell_num < 9; ++cell_num)
-        {
-            int curr_num = grid[((int)(block_num / 3)) * 3 + (cell_num / 3)][((int)(block_num % 3)) * 3 + (cell_num % 3)];
-            if (curr_num != UNASSIGNED && nums[curr_num] == true)
-            {
-                grid_status = false;
-                return;
-            }
-            nums[curr_num] = true;
-        }
-    }
-
-    // Randomly shuffling the guessing number array
-    for (int i = 0; i < 9; i++)
-    {
-        this->guessNum[i] = i + 1;
-    }
-
-    random_shuffle(this->guessNum, (this->guessNum) + 9, genRandNum);
-
-    grid_status = true;
-}
-// END: Custom Initialising
-
-// START: Verification status of the custom grid passed
+//  Verification status of the custom grid passed
 bool SudokuGenerator::verifyGridStatus()
 {
     return grid_status;
 }
-// END: Verification of the custom grid passed
 
-// START: Printing the grid
-void SudokuGenerator::printGrid()
-{
-    for (int i = 0; i < 9; i++)
-    {
-        for (int j = 0; j < 9; j++)
-        {
-            if (grid[i][j] == 0)
-                cout << ".";
-            else
-                cout << grid[i][j];
-            cout << "|";
-        }
-        cout << endl;
-    }
-
-    cout << "\nDifficulty of current sudoku(0 being easiest): " << this->difficultyLevel;
-    cout << endl;
-}
-// END: Printing the grid
-
-// START: Helper functions for solving grid
+// Helper functions for solving grid
 bool FindUnassignedLocation(int grid[9][9], int &row, int &col)
 {
     for (row = 0; row < 9; row++)
@@ -280,9 +129,7 @@ bool isSafe(int grid[9][9], int row, int col, int num)
     return !UsedInRow(grid, row, num) && !UsedInCol(grid, col, num) && !UsedInBox(grid, row - row % 3, col - col % 3, num);
 }
 
-// END: Helper functions for solving grid
-
-// START: Modified SudokuGeneratorsolver
+// Modified SudokuGeneratorsolver
 bool SudokuGenerator::solveGrid()
 {
     int row, col;
@@ -300,20 +147,19 @@ bool SudokuGenerator::solveGrid()
             // make tentative assignment
             this->grid[row][col] = this->guessNum[num];
 
-            // return, if success, yay!
+            // return, if success
             if (solveGrid())
                 return true;
 
-            // failure, unmake & try again
+            // failure, undo & try again
             this->grid[row][col] = UNASSIGNED;
         }
     }
 
     return false; // this triggers backtracking
 }
-// END: Modified SudokuGeneratorSolver
 
-// START: Check if the grid is uniquely solvable
+// Function to Check if the grid is uniquely solvable
 void SudokuGenerator::countSoln(int &number)
 {
     int row, col;
@@ -335,9 +181,8 @@ void SudokuGenerator::countSoln(int &number)
         this->grid[row][col] = UNASSIGNED;
     }
 }
-// END: Check if the grid is uniquely solvable
 
-// START: Gneerate puzzle
+// Function to Gneerate puzzle
 void SudokuGenerator::genPuzzle()
 {
     for (int i = 0; i < 81; i++)
@@ -356,125 +201,3 @@ void SudokuGenerator::genPuzzle()
         }
     }
 }
-// END: Generate puzzle
-
-// START: Printing into SVG file
-void SudokuGenerator::printSVG(string path = "")
-{
-    string fileName = path + "svgHead.txt";
-    ifstream file1(fileName.c_str());
-    stringstream svgHead;
-    svgHead << file1.rdbuf();
-
-    ofstream outFile("puzzle.svg");
-    outFile << svgHead.rdbuf();
-
-    for (int i = 0; i < 9; i++)
-    {
-        for (int j = 0; j < 9; j++)
-        {
-            if (this->grid[i][j] != 0)
-            {
-                int x = 50 * j + 16;
-                int y = 50 * i + 35;
-
-                stringstream text;
-                text << "<text x=\"" << x << "\" y=\"" << y << "\" style=\"font-weight:bold\" font-size=\"30px\">" << this->grid[i][j] << "</text>\n";
-
-                outFile << text.rdbuf();
-            }
-        }
-    }
-
-    outFile << "<text x=\"50\" y=\"500\" style=\"font-weight:bold\" font-size=\"15px\">Difficulty Level (0 being easiest): " << this->difficultyLevel << "</text>\n";
-    outFile << "</svg>";
-}
-// END: Printing into SVG file
-
-// START: Calculate branch difficulty score
-int SudokuGenerator::branchDifficultyScore()
-{
-    int emptyPositions = -1;
-    int tempGrid[9][9];
-    int sum = 0;
-
-    for (int i = 0; i < 9; i++)
-    {
-        for (int j = 0; j < 9; j++)
-        {
-            tempGrid[i][j] = this->grid[i][j];
-        }
-    }
-
-    while (emptyPositions != 0)
-    {
-        vector<vector<int>> empty;
-
-        for (int i = 0; i < 81; i++)
-        {
-            if (tempGrid[(int)(i / 9)][(int)(i % 9)] == 0)
-            {
-                vector<int> temp;
-                temp.push_back(i);
-
-                for (int num = 1; num <= 9; num++)
-                {
-                    if (isSafe(tempGrid, i / 9, i % 9, num))
-                    {
-                        temp.push_back(num);
-                    }
-                }
-
-                empty.push_back(temp);
-            }
-        }
-
-        if (empty.size() == 0)
-        {
-            cout << "Hello: " << sum << endl;
-            return sum;
-        }
-
-        int minIndex = 0;
-
-        int check = empty.size();
-        for (int i = 0; i < check; i++)
-        {
-            if (empty[i].size() < empty[minIndex].size())
-                minIndex = i;
-        }
-
-        int branchFactor = empty[minIndex].size();
-        int rowIndex = empty[minIndex][0] / 9;
-        int colIndex = empty[minIndex][0] % 9;
-
-        tempGrid[rowIndex][colIndex] = this->solnGrid[rowIndex][colIndex];
-        sum = sum + ((branchFactor - 2) * (branchFactor - 2));
-
-        emptyPositions = empty.size() - 1;
-    }
-
-    return sum;
-}
-// END: Finish branch difficulty score
-
-// START: Calculate difficulty level of current grid
-void SudokuGenerator::calculateDifficulty()
-{
-    int B = branchDifficultyScore();
-    int emptyCells = 0;
-
-    for (int i = 0; i < 9; i++)
-    {
-        for (int j = 0; j < 9; j++)
-        {
-            if (this->grid[i][j] == 0)
-                emptyCells++;
-        }
-    }
-
-    this->difficultyLevel = B * 100 + emptyCells;
-}
-// END: calculating difficulty level
-
-// START: The main function

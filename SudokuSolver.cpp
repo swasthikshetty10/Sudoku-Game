@@ -65,28 +65,4 @@ public:
     {
         return !UsedInRow(grid, row, num) && !UsedInCol(grid, col, num) && !UsedInBox(grid, row - row % 3, col - col % 3, num) && grid[row][col] == UNASSIGNED;
     }
-    void printGrid(int grid[N][N])
-    {
-
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                if ((i == 0 | i == 3 | i == 6) && j == 0)
-                    cout << " -------------------------"
-                         << "\n";
-                if (j == 0 | j == 3 | j == 6)
-                    cout << " | ";
-                else
-                    cout << " ";
-                if (grid[i][j])
-                    cout << grid[i][j];
-                else
-                    cout << '-';
-            }
-            cout << " | \n";
-        }
-        cout << " -------------------------"
-             << "\n";
-    }
 };
