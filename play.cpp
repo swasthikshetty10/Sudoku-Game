@@ -13,6 +13,7 @@ private:
     SudokuGenerator *puzzle;
     bool gameOver = 0;
     string clearscreen = "\033[2J\033[1;1H"; // Clear Screen
+    int solved = 0;                          // To keep count of correct entry
 
 public:
     // Constructor
@@ -69,6 +70,13 @@ public:
                         {
                             grid[row - 1][col - 1] = num;
                         }
+                        if (solved == 81)
+                        {
+                            gameOver = 1;
+                            cout << "You Won :) \n";
+                            cout << "Press any key to exit" << endl;
+                            cin >> temp;
+                        }
                     }
                 }
             }
@@ -113,10 +121,18 @@ public:
                 else
                     cout << " ";
                 if (grid[i][j])
+                {
                     if (grid[i][j] == (puzzle->grid)[i][j])
+                    {
                         cout << grid[i][j];
+                    }
                     else
+                    {
                         cout << grid[i][j];
+                    }
+                    solved++;
+                }
+
                 else
                     cout << '-';
             }
