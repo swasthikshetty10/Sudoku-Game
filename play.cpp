@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#include "SudokuSolver.cpp"
 #include "SudokuGenerator.cpp"
 using namespace std;
 #define N 9
