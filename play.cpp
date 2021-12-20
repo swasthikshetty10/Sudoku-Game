@@ -1,8 +1,9 @@
 #include <bits/stdc++.h>
+#include <windows.h>
 #include "SudokuGenerator.cpp"
-using namespace std;
 #define N 9
-
+using namespace std;
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); // To set text color
 // Sudoku Game
 class Sudoku : virtual SudokuSolver
 {
@@ -110,8 +111,10 @@ public:
     // function to print grid to console
     void printGrid(int grid[N][N])
     {
+
         for (int i = 0; i < 9; i++)
         {
+            SetConsoleTextAttribute(hConsole, 3); // setting Light Aqua as text color for console
             for (int j = 0; j < 9; j++)
             {
                 if ((i == 0 | i == 3 | i == 6) && j == 0)
@@ -124,21 +127,30 @@ public:
                 {
                     if (grid[i][j] == (puzzle->grid)[i][j])
                     {
+                        if (grid[i][j] == Qgrid[i][j])
+                            SetConsoleTextAttribute(hConsole, 7); // setting white as text color
+                        else
+                            SetConsoleTextAttribute(hConsole, 2); // setting green as text color
                         cout << grid[i][j];
                     }
                     else
                     {
+                        SetConsoleTextAttribute(hConsole, 4); // setting red as text color
                         cout << grid[i][j];
                     }
                     solved++;
                 }
-
                 else
+                {
+                    SetConsoleTextAttribute(hConsole, 3);
                     cout << '-';
+                }
             }
+            SetConsoleTextAttribute(hConsole, 3);
             cout << " | \n";
         }
         cout << " -------------------------\n";
+        SetConsoleTextAttribute(hConsole, 7);
     }
     // function  check if entered location valid
     bool isValid(int row, int col)
