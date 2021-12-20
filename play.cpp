@@ -111,7 +111,7 @@ public:
     // function to print grid to console
     void printGrid(int grid[N][N])
     {
-
+        solved = 0;
         for (int i = 0; i < 9; i++)
         {
             SetConsoleTextAttribute(hConsole, 3); // setting Light Aqua as text color for console
