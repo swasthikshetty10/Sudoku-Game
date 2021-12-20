@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #include <windows.h>
 #include "SudokuGenerator.cpp"
+#include "ScoreHandler.cpp"
 #define N 9
 using namespace std;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); // To set text color
@@ -15,6 +16,7 @@ private:
     bool gameOver = 0;
     string clearscreen = "\033[2J\033[1;1H"; // Clear Screen
     int solved = 0;                          // To keep count of correct entry
+    ScoreHandler Score;
 
 public:
     // Constructor
@@ -48,6 +50,7 @@ public:
                 cin >> player_name;
                 while (gameOver != 1)
                 {
+                    Score.startime(); // start time to record score;
                     cout << clearscreen;
                     cout << "Hi " << player_name << " Solve this :                                                         | Enter 0 & 0 to exit   \n";
                     printGrid(grid);
@@ -74,6 +77,8 @@ public:
                         if (solved == 81)
                         {
                             gameOver = 1;
+                            Score.endtime(); // end time to record score;
+                            Score.setHighScore(player_name);
                             cout << "You Won :) \n";
                             cout << "Press any key to exit" << endl;
                             cin >> temp;
@@ -83,7 +88,9 @@ public:
             }
             if (choice - '0' == 2)
             {
-                displayHighScore();
+                Score.display();
+                cout << "Press any key to exit" << endl;
+                cin >> temp;
             }
             if (choice - '0' == 3)
             {
@@ -159,10 +166,6 @@ public:
             return 1;
         else
             return 1;
-    }
-    void displayHighScore()
-    {
-        cout << "High Score:-\n";
     }
 };
 
