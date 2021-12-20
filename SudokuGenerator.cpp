@@ -23,6 +23,7 @@ public:
     void printGrid();
     void countSoln(int &number);
     void genPuzzle();
+    bool solveGrid();
     bool verifyGridStatus();
 };
 
@@ -35,7 +36,7 @@ int genRandNum(int maxLimit)
 // Function to Create seed grid
 void SudokuGenerator::createSeed()
 {
-    this->SolveSudoku(this->grid);
+    this->solveGrid();
     // Saving the solution grid
     for (int i = 0; i < 9; i++)
         for (int j = 0; j < 9; j++)
@@ -45,6 +46,7 @@ void SudokuGenerator::createSeed()
 // Function to Intialising
 SudokuGenerator::SudokuGenerator()
 {
+    srand(time(NULL));
     // Randomly shuffling the array of removing grid positions
     for (int i = 0; i < 81; i++)
         this->gridPos[i] = i;
@@ -94,6 +96,34 @@ void SudokuGenerator::countSoln(int &number)
 
         this->grid[row][col] = UNASSIGNED;
     }
+}
+bool SudokuGenerator::solveGrid()
+{
+    int row, col;
+
+    // If there is no unassigned location, we are done
+    if (!FindUnassignedLocation(this->grid, row, col))
+        return true; // success!
+
+    // Consider digits 1 to 9
+    for (int num = 0; num < 9; num++)
+    {
+        // if looks promising
+        if (isSafe(this->grid, row, col, this->guessNum[num]))
+        {
+            // make tentative assignment
+            this->grid[row][col] = this->guessNum[num];
+
+            // return, if success
+            if (solveGrid())
+                return true;
+
+            // failure, undo & try again
+            this->grid[row][col] = UNASSIGNED;
+        }
+    }
+
+    return false; // this triggers backtracking
 }
 
 // Function to Gneerate puzzle
