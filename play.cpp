@@ -36,7 +36,7 @@ public:
         char temp, choice;
         while (1)
         {
-            cout << clearscreen; // Clear screen
+            system("cls||clear"); // Clear screen
             cout << "--------Welcome To Sudoku Game--------\n\n";
             cout << "1 -> START\n";
             cout << "2 -> HIGH SCORE\n";
@@ -51,17 +51,17 @@ public:
                 while (gameOver != 1)
                 {
                     Score.startime(); // start time to record score;
-                    cout << clearscreen;
+                    system("cls||clear");
                     cout << "Hi " << player_name << " Solve this :                                                         | Enter 0 & 0 to exit   \n";
                     printGrid(grid);
                     cout << "Enter Row & Column:\n ";
                     cin >> row >> col;
                     if (row == 0 & col == 0)
                     {
-                        cout << clearscreen;
+                        system("cls||clear");
                         cout << "Solution : " << endl;
                         printGrid(puzzle->grid);
-                        cout << "press any key to exit \n";
+                        cout << "press any key to exit ... \n";
                         cin >> temp;
                         gameOver = 1;
                         break;
@@ -80,7 +80,7 @@ public:
                             Score.endtime(); // end time to record score;
                             Score.setHighScore(player_name);
                             cout << "You Won :) \n";
-                            cout << "Press any key to exit" << endl;
+                            cout << "Press any key to exit ..." << endl;
                             cin >> temp;
                         }
                     }
@@ -89,7 +89,7 @@ public:
             if (choice - '0' == 2)
             {
                 Score.display();
-                cout << "Press any key to exit" << endl;
+                cout << "Press any key to exit ..." << endl;
                 cin >> temp;
             }
             if (choice - '0' == 3)
@@ -139,21 +139,21 @@ public:
                         else
                             SetConsoleTextAttribute(hConsole, 2); // setting green as text color
                         cout << grid[i][j];
+                        solved++;
                     }
                     else
                     {
                         SetConsoleTextAttribute(hConsole, 4); // setting red as text color
                         cout << grid[i][j];
                     }
-                    solved++;
                 }
                 else
                 {
                     SetConsoleTextAttribute(hConsole, 3);
                     cout << '-';
                 }
+                SetConsoleTextAttribute(hConsole, 3);
             }
-            SetConsoleTextAttribute(hConsole, 3);
             cout << " | \n";
         }
         cout << " -------------------------\n";
@@ -165,7 +165,7 @@ public:
         if (Qgrid[row][col] == 0)
             return 1;
         else
-            return 1;
+            return 0;
     }
 };
 
